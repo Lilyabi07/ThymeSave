@@ -1,0 +1,44 @@
+@startuml
+left to right direction
+actor Customer
+actor Admin
+Admin --|> Customer
+
+rectangle "Grocery Planner Web-App" {
+
+  (Browse Recipes with filter & search) as UC_Browse
+  (Select Recipe and Add to Shopping List) as UC_Select
+  (Generate Shopping List) as UC_Shopping
+  (Manage My Recipes) as UC_Recipe
+  (Modify or Save Shopping List) as UC_SaveList
+  (Manage official Recipes) as UC_ManageRecipes
+  (Login / Register) as UC_Login
+  (Import / Export Recipes) as UC_Import
+  (Favorite Recipe) as UC_fave
+  (View Reports) as UC_Reps
+  (Browse User Profiles) as UC_BUser
+  (Moderate Public Recipes) as UC_Mod
+  (Manage My Profile) as UC_Profile
+  '() as UC___
+
+  ' ==== Customer Actions ====
+  Customer -- UC_Browse
+  Customer -- UC_Select
+  Customer -- UC_Shopping
+  Customer -- UC_Recipe
+  Customer -- UC_SaveList
+  Customer -- UC_Login
+  Customer -- UC_Import
+  Customer -- UC_fave
+  Customer -- UC_Profile
+  Customer -- UC_BUser
+  UC_SaveList .> UC_Shopping : <<includes>>
+  UC_Shopping .> UC_Select : <<includes>>
+UC_Select <. UC_Browse : <<extends>>
+  ' ==== Admin Actions ====
+
+  Admin -- UC_Reps
+  Admin -- UC_Mod
+  Admin -- UC_ManageRecipes
+}
+@enduml

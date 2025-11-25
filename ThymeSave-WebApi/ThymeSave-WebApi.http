@@ -1,0 +1,6 @@
+@ThymeSave_WebApi_HostAddress = http://localhost:5194
+
+GET {{ThymeSave_WebApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

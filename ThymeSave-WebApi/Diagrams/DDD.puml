@@ -1,0 +1,268 @@
+@startuml
+hide circle
+top to bottom direction
+scale 0.2
+!define ENTITY(entityName) class entityName << Entity >>
+!define ENUM(enumName) class enumName << Enum >>
+!define AGGREGATE(aggregateName) class aggregateName << Aggregate >>
+!define AGGREGATE_ROOT(aggregateRootName) class aggregateRootName << Aggregate Root >>
+!define AGGREGATE_ROOT_ENTITY(aggregateRootEntityName) class aggregateRootEntityName << Aggregate Root >> << Entity >>
+!define VALUE_OBJECT(valueObjectName) class valueObjectName << Value Object >>
+!pragma useVerticalIf on
+skinparam dpi 350
+skinparam packageStyle rectangle
+skinparam rectangle {
+    BackgroundColor #f7f4eb
+    BorderColor Black
+}
+
+rectangle "Grocery Planner Context" as BoundedContextGroceryPlanner #line.dashed {
+
+    ' ======================================================
+    ' =============== MERGED RECIPE SUB-DOMAIN ============
+    ' ======================================================
+    Package "Recipe Sub-Domain" as RecipeDomain <<Rectangle>> #LightYellow {
+
+        ENUM(RecipeSource) {
+            OFFICIAL
+            USER_SUBMITTED
+        }
+
+        VALUE_OBJECT(Instruction) #Bisque {
+            stepNumber: int
+            description: String
+        }
+
+        VALUE_OBJECT(RecipeIdentifier) #Bisque {
+            recipeId: UUID
+        }
+
+        VALUE_OBJECT(IngredientIdentifier) #Bisque {
+            ingredientId: UUID
+        }
+
+        ENTITY(Ingredient) #lightpink {
+            name: String
+            category: String
+        }
+
+        ENTITY(RecipeIngredient) #lightpink {
+            quantity: Double
+            unitType: UnitType
+        }
+
+        ENUM(RecipeVisibility) {
+            PUBLIC
+            PRIVATE
+        }
+
+        ENUM(RecipeStatus){
+            ACTIVE
+            INACTIVE
+            HIDDEN
+            REMOVED
+        }
+
+        ENUM(RecipeCategory) {
+            VEGAN
+            VEGETARIAN
+            KETO
+            GLUTEN_FREE
+            DAIRY_FREE
+            PALEO
+            OTHER
+        }
+
+        AGGREGATE_ROOT(Recipe) #turquoise {
+            name: String
+            description: String
+            difficulty: int
+            prepTime: int
+            cookTime: int
+            servings: int
+            category: RecipeCategory
+            source: RecipeSource
+            status: RecipeStatus
+            visibility: RecipeVisibility
+            reportedAmount: int
+            createdBy: UserAccountIdentifier : (null when official)
+        }
+
+        Recipe <-l- RecipeIdentifier
+
+        Recipe *-- RecipeIngredient
+        RecipeIngredient --> IngredientIdentifier
+
+        Ingredient <-- IngredientIdentifier
+
+        Recipe "1" o-u-> "1..*" Instruction
+        Recipe -u-> RecipeSource
+        Recipe -d-> RecipeCategory
+        Recipe -u-> RecipeVisibility
+        Recipe -u-> RecipeStatus
+    }
+    ' ======================================================
+    ' ================ AUTHENTICATION SUB-DOMAIN ==========
+    ' ======================================================
+package "Authentication Sub-Domain" #LightSalmon {
+
+    AGGREGATE_ROOT_ENTITY(UserAccount) #turquoise {
+        email: String
+        username: String
+        createdDate: Date
+        lastLogIn: Date
+        displayName: String
+        bio: String
+    }
+
+    VALUE_OBJECT(UserAccountIdentifier) #Bisque {
+        userAccountId: UUID
+    }
+
+    VALUE_OBJECT(Credentials) #Bisque {
+        username: String
+        password: String
+    }
+
+    VALUE_OBJECT(AuthToken) #Bisque {
+        token: String
+        expiry: DateTime
+    }
+
+    ENTITY(FavoriteRecipe) #lightpink {
+        favoritedAt: DateTime
+    }
+
+    UserAccount --> UserAccountIdentifier
+    UserAccount --> Credentials
+    UserAccount --> AuthToken
+    UserAccount "1" o--> "0..*" FavoriteRecipe
+    FavoriteRecipe --> RecipeIdentifier
+}
+
+    ' ======================================================
+    ' ================ SHOPPING LIST SUB-DOMAIN ============
+    ' ======================================================
+    Package "Shopping List Sub-Domain" as ShoppingListDomain <<Rectangle>> #LightGreen {
+        AGGREGATE_ROOT(ShoppingList) #turquoise {
+            createdDate: Date
+            totalItems: Integer
+        }
+
+        ENTITY(ConsolidatedItem) #lightpink {
+            name: String
+            normalizedQuantity: Double
+            normalizedUnit: String
+        }
+
+        VALUE_OBJECT(ShoppingListIdentifier) #Bisque {
+            listId: UUID
+        }
+
+        VALUE_OBJECT(Quantity) #Bisque {
+            value: Double
+            unit: String
+        }
+
+        VALUE_OBJECT(UnitConverter) #Bisque {
+            convert(quantity, fromUnit, toUnit): Double
+        }
+
+        ENTITY(ShoppingListRecipeItem) #lightpink {}
+
+        ShoppingList -r-> ShoppingListIdentifier
+        ShoppingList "1" o-l-> "0..*" ConsolidatedItem
+        ShoppingList "1" --> "1..*" ShoppingListRecipeItem
+
+        ShoppingListRecipeItem "1" --> "1" RecipeIdentifier
+
+        ConsolidatedItem o--> Quantity
+        ShoppingList --> UnitConverter
+    }
+
+    ' ======================================================
+    ' ================ REPORTING SUB-DOMAIN ================
+    ' ======================================================
+    Package "Reporting Sub-Domain" as ReportingDomain <<Rectangle>> #LightCyan {
+
+        ENUM(ReportType) {
+            ACTIVITY_STATISTICS
+            MOST_FAVORITED_RECIPES
+            RECIPES_ADDED
+
+        }
+
+        VALUE_OBJECT(ReportIdentifier) #Bisque {
+            reportId: UUID
+        }
+
+        AGGREGATE_ROOT(Report) #turquoise {
+            reportId: UUID
+            reportType: ReportType
+            generatedAt: DateTime
+        }
+
+        ENTITY(ReportData) #lightpink {
+            key: String
+            value: String
+        }
+
+        Report --> ReportIdentifier
+        Report --> ReportType
+        Report "1" o--> "0..*" ReportData
+    }
+
+    ' ======================================================
+    ' ================ UTILITY SUB-DOMAIN =================
+    ' ======================================================
+    Package "Utility Sub-Domain" as UtilityDomain <<Rectangle>> #LightGray {
+
+        ENUM(UnitType) {
+            GRAM
+            KILOGRAM
+            LITER
+            MILLILITER
+            CUP
+            TEASPOON
+            TABLESPOON
+            UNIT
+        }
+        VALUE_OBJECT(Image) #Bisque {
+            image: String
+            altText: String
+        }
+
+        ENUM(ImageType){
+            RECIPE
+            USER_PROFILE
+            INGREDIENT
+        }
+
+
+        VALUE_OBJECT(UnitNormalizationRule) #Bisque {
+            fromUnit: UnitType
+            toUnit: UnitType
+            ratio: Double
+        }
+        Image --> ImageType
+        UnitNormalizationRule --> UnitType
+        UnitNormalizationRule <-- UnitConverter
+    }
+
+    ' ======================================================
+    ' ================ CROSS-DOMAIN REFERENCES ============
+    ' ======================================================
+    Recipe --> UserAccountIdentifier
+        Recipe --> Image
+        Ingredient --> Image
+        UserAccount --> Image
+        Quantity --> UnitType
+
+    ShoppingList -u-> UserAccountIdentifier
+    Report --> UserAccountIdentifier
+        RecipeIngredient *-- UnitType
+        Report -l-> RecipeIdentifier
+
+
+}
+@enduml
