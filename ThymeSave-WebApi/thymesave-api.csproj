@@ -7,6 +7,7 @@
     <RootNamespace>ThymeSave_WebApi</RootNamespace>
     <UserSecretsId>23b40619-5e8e-402f-b787-8563135ccebe</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -28,10 +29,10 @@
     <Folder Include="Server\Data\Recipe\" />
     <Folder Include="Server\Data\ShoppingList\" />
     <Folder Include="Server\Data\Utility\" />
-    <Folder Include="Server\Domain\Authentication\" />
-    <Folder Include="Server\Domain\Recipe\" />
-    <Folder Include="Server\Domain\ShoppingList\" />
-    <Folder Include="Server\Domain\Utility\" />
+    <Folder Include="Server\Logic\Authentication\" />
+    <Folder Include="Server\Logic\Recipe\" />
+    <Folder Include="Server\Logic\ShoppingList\" />
+    <Folder Include="Server\Logic\Utility\" />
   </ItemGroup>
 
 </Project>

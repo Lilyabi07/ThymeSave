@@ -1,0 +1,58 @@
+services:
+  thymesave-webapi:
+    build:
+      context: ./ThymeSave-WebApi
+    container_name: thymesave-api-dev
+    command: dotnet watch run --urls=http://0.0.0.0:8080
+    ports:
+      - "8080:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ConnectionStrings__Default: "Server=db;Database=ThymeSave;User=sa;Password=Final2025"
+    depends_on:
+      - db
+    networks:
+      - thymesave-net
+
+  # thymesave-frontend:
+  #   build:
+  #     context: ./thymesave-frontend
+  #     dockerfile: Dockerfile
+  #   container_name: thymesave-frontend-dev
+  #   #command: "npm run dev"
+  #   ports:
+  #     - "5173:5173" # Vite dev server
+  #   networks:
+  #     - thymesave-net
+  #   restart: unless-stopped
+
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: thymesave-db-dev
+    environment:
+      SA_PASSWORD: "Final2025"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+    networks:
+      - thymesave-net
+
+  db-init:
+    image: mcr.microsoft.com/mssql-tools:latest
+    container_name: thymesave-db-init
+    depends_on:
+      - db
+    entrypoint: ["/bin/bash", "/db-init/init.sh"]
+    volumes:
+      - ./Database:/db-init
+    environment:
+      SA_PASSWORD: "Final2025"
+    networks:
+      - thymesave-net
+
+networks:
+  thymesave-net:
+    driver: bridge
+
+volumes:
+  db_data:
