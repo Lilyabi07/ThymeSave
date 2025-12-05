@@ -4,9 +4,6 @@
   text-align: center;
 }
 #main {
-  min-width:100%;
-  color:green;
-}
-#header{
-  
+  min-width: 100%;
+  color: rgb(255, 255, 255);
 }
