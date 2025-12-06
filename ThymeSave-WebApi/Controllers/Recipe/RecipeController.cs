@@ -15,7 +15,7 @@ namespace ThymeSave_WebApi.Controllers.Recipe
             _recipeLogic = recipeLogic;
         }
 
-        [HttpGet("{recipeIdentifer}")]
+        [HttpGet("{recipeIdentifier}")]
         public IActionResult GetRecipeByRecipeId(string recipeIdentifier)
         {
             if (!Guid.TryParse(recipeIdentifier, out var recipeId))
