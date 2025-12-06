@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace ThymeSave_WebApi.Server.Controllers
+namespace ThymeSave_WebApi.Controllers
 {
     //[ApiController]
     //[Route("[controller]")]

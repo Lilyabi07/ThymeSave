@@ -12,24 +12,35 @@ GO
 ------------------------------------------------------------
 
 --------Recipes
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[RecipeSource]') AND type = 'U')
+BEGIN
 CREATE TABLE RecipeSource (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     name NVARCHAR(50) UNIQUE NOT NULL,
     CONSTRAINT CHK_RecipeSource CHECK (name IN ('OFFICIAL','USER_SUBMITTED'))
 );
+END
 
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[RecipeVisibility]') AND type = 'U')
+BEGIN
 CREATE TABLE RecipeVisibility (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     name NVARCHAR(50) UNIQUE NOT NULL,
     CONSTRAINT CHK_RecipeVisibility CHECK (name IN ('PUBLIC','PRIVATE'))
 );
+END
 
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[RecipeStatus]') AND type = 'U')
+BEGIN
 CREATE TABLE RecipeStatus (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     name NVARCHAR(50) UNIQUE NOT NULL,
     CONSTRAINT CHK_RecipeStatus CHECK (name IN ('ACTIVE','INACTIVE','HIDDEN','REMOVED'))
 );
+END
 
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[RecipeCategory]') AND type = 'U')
+BEGIN
 CREATE TABLE RecipeCategory (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     name NVARCHAR(50) UNIQUE NOT NULL,
@@ -37,8 +48,11 @@ CREATE TABLE RecipeCategory (
         'VEGAN','VEGETARIAN','KETO','GLUTEN_FREE','DAIRY_FREE','PALEO','OTHER'
     ))
 );
+END
 
 ----------Utils
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[UnitType]') AND type = 'U')
+BEGIN
 CREATE TABLE UnitType (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     name NVARCHAR(50) UNIQUE NOT NULL,
@@ -47,7 +61,10 @@ CREATE TABLE UnitType (
         'CUP','TEASPOON','TABLESPOON','UNIT'
     ))
 );
+END
 
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[ImageType]') AND type = 'U')
+BEGIN
 CREATE TABLE ImageType (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     name NVARCHAR(50) UNIQUE NOT NULL,
@@ -55,11 +72,12 @@ CREATE TABLE ImageType (
         'RECIPE','INGREDIENT','USER_PROFILE'
     ))
 );
-
+END
 ------------------------------------------------------------
 -- UTILITY SUB-DOMAIN
 ------------------------------------------------------------
-
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Image]') AND type = 'U')
+BEGIN
 CREATE TABLE Image (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     identifier UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(),
@@ -70,7 +88,7 @@ CREATE TABLE Image (
     typeId INT NOT NULL,
     FOREIGN KEY (typeId) REFERENCES ImageType(Id)
 );
-
+END
 --CREATE TABLE UnitNormalizationRule (
 --    Id INT IDENTITY(1,1) PRIMARY KEY,
 --    identifier UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(),
@@ -86,7 +104,8 @@ CREATE TABLE Image (
 ------------------------------------------------------------
 -- AUTHENTICATION SUB-DOMAIN
 ------------------------------------------------------------
-
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[UserAccount]') AND type = 'U')
+BEGIN
 CREATE TABLE UserAccount (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     identifier UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(),
@@ -100,7 +119,10 @@ CREATE TABLE UserAccount (
     displayName NVARCHAR(120) NULL,
     bio NVARCHAR(2000) NULL
 );
+END
 
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[AuthToken]') AND type = 'U')
+BEGIN
 CREATE TABLE AuthToken (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     identifier UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(),
@@ -111,7 +133,7 @@ CREATE TABLE AuthToken (
 
     FOREIGN KEY (userAccountId) REFERENCES UserAccount(Id) ON DELETE CASCADE
 );
-
+END
 
 
 ------------------------------------------------------------
@@ -119,6 +141,8 @@ CREATE TABLE AuthToken (
 ------------------------------------------------------------
 
 -- INGREDIENT (belongs to recipe context)
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Ingredient]') AND type = 'U')
+BEGIN
 CREATE TABLE Ingredient (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     identifier UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(),
@@ -129,8 +153,11 @@ CREATE TABLE Ingredient (
     imageId INT NULL,
     FOREIGN KEY (imageId) REFERENCES Image(Id)
 );
+END
 
 -- RECIPE AGGREGATE ROOT
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Recipe]') AND type = 'U')
+BEGIN
 CREATE TABLE Recipe (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     identifier UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(),
@@ -159,8 +186,11 @@ CREATE TABLE Recipe (
     FOREIGN KEY (imageId)      REFERENCES Image(Id),
     FOREIGN KEY (createdById)  REFERENCES UserAccount(Id)
 );
+END
 
 -- RECIPE INSTRUCTIONS (1:N VO COLLECTION)
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[RecipeInstruction]') AND type = 'U')
+BEGIN
 CREATE TABLE RecipeInstruction (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     identifier UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(),
@@ -171,8 +201,11 @@ CREATE TABLE RecipeInstruction (
 
     FOREIGN KEY (recipeId) REFERENCES Recipe(Id) ON DELETE CASCADE
 );
+END
 
 -- RECIPE INGREDIENTS (1:N VO COLLECTION)
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[RecipeIngredient]') AND type = 'U')
+BEGIN
 CREATE TABLE RecipeIngredient (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     identifier UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(),
@@ -186,7 +219,10 @@ CREATE TABLE RecipeIngredient (
     FOREIGN KEY (ingredientId) REFERENCES Ingredient(Id),
     FOREIGN KEY (unitTypeId)   REFERENCES UnitType(Id)
 );
+END
 
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[FavoriteRecipe]') AND type = 'U')
+BEGIN
 CREATE TABLE FavoriteRecipe (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     identifier UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(),
@@ -198,11 +234,13 @@ CREATE TABLE FavoriteRecipe (
     FOREIGN KEY (userAccountId) REFERENCES UserAccount(Id) ON DELETE CASCADE,
     FOREIGN KEY (recipeId)      REFERENCES Recipe(Id)      ON DELETE CASCADE
 );
+END
 
 ------------------------------------------------------------
 -- SHOPPING LIST SUB-DOMAIN
 ------------------------------------------------------------
-
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[ShoppingList]') AND type = 'U')
+BEGIN
 CREATE TABLE ShoppingList (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     identifier UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(),
@@ -213,7 +251,10 @@ CREATE TABLE ShoppingList (
 
     FOREIGN KEY (userAccountId) REFERENCES UserAccount(Id) ON DELETE CASCADE
 );
+END
 
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[ShoppingListRecipeItem]') AND type = 'U')
+BEGIN
 CREATE TABLE ShoppingListRecipeItem (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     identifier UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(),
@@ -224,7 +265,10 @@ CREATE TABLE ShoppingListRecipeItem (
     FOREIGN KEY (shoppingListId) REFERENCES ShoppingList(Id) ON DELETE CASCADE,
     FOREIGN KEY (recipeId)      REFERENCES Recipe(Id)
 );
+END
 
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[ConsolidatedItem]') AND type = 'U')
+BEGIN
 CREATE TABLE ConsolidatedItem (
     Id INT IDENTITY(1,1) PRIMARY KEY,
     identifier UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID(),
@@ -239,3 +283,4 @@ CREATE TABLE ConsolidatedItem (
     FOREIGN KEY (shoppingListId) REFERENCES ShoppingList(Id) ON DELETE CASCADE,
     FOREIGN KEY (ingredientId)   REFERENCES Ingredient(Id)
 );
+END
