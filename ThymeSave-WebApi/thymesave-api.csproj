@@ -24,15 +24,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Server\Data\Authentication\" />
+    <Folder Include="Controllers\DTOs\Authentication\" />
+    <Folder Include="Controllers\DTOs\ShoppingList\" />
+    <Folder Include="Controllers\DTOs\Utility\" />
+    <Folder Include="Data\Authentication\" />
     <Folder Include="Diagrams\" />
-    <Folder Include="Server\Data\Recipe\" />
-    <Folder Include="Server\Data\ShoppingList\" />
-    <Folder Include="Server\Data\Utility\" />
-    <Folder Include="Server\Logic\Authentication\" />
-    <Folder Include="Server\Logic\Recipe\" />
-    <Folder Include="Server\Logic\ShoppingList\" />
-    <Folder Include="Server\Logic\Utility\" />
+    <Folder Include="Data\ShoppingList\" />
+    <Folder Include="Data\Utility\" />
+    <Folder Include="Logic\Authentication\" />
+    <Folder Include="Logic\ShoppingList\" />
+    <Folder Include="Logic\Utility\" />
   </ItemGroup>
 
 </Project>

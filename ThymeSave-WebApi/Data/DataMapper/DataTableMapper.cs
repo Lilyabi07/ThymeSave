@@ -1,6 +1,6 @@
 ﻿using System.Data;
 
-namespace ThymeSave_WebApi.Server.Data.DataMapper
+namespace ThymeSave_WebApi.Data.DataMapper
 {
     public static class DataTableMapper
     {
