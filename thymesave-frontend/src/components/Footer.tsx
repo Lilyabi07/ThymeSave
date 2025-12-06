@@ -10,7 +10,7 @@ export function Footer() {
         backgroundColor: "#F4FBFF",
         color: "#333",
         py: 3,
-        px: { xs: 2, md: 5, xl: 35 },
+        px: { xs: 2, md: 5, xl: 24 },
         mt: "auto",
         borderTop: "1px solid #e0e0e0",
         fontFamily: "'Inter', sans-serif",
@@ -143,8 +143,7 @@ export function Footer() {
                 fontSize: "0.85rem",
               }}
             >
-              <strong>Address:</strong> 2210 Boul. Lapinière #200, Brossard J4W
-              1M2
+              <strong>Address:</strong> 2210 Boul. Lapinière, Brossard J4W 1M2
             </Typography>
           </Stack>
         </Grid>

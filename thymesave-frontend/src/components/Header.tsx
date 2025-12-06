@@ -5,20 +5,22 @@ import Navbar from "./Navbar";
 import MobileMenu from "./MobileMenu";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { buttonStyle } from "../theme/style";
+import { useNavigate } from "react-router-dom";
 
 interface HeaderProps {
   isLoggedIn: boolean;
-  onLogin?: () => void;
   onLogout?: () => void;
   showNavbar?: boolean;
+  onLogoClick?: () => void;
 }
 
 export default function Header({
   isLoggedIn,
-  onLogin,
   onLogout,
   showNavbar = true,
+  onLogoClick,
 }: HeaderProps) {
+  const navigate = useNavigate();
   return (
     <Grid
       container
@@ -29,7 +31,7 @@ export default function Header({
         color: "black",
         p: 4,
         pb: 1.5,
-        px: { xs: 2, md: 5, xl: 35 },
+        px: { xs: 2, md: 8, lg: 24, xl: 24 },
         boxSizing: "border-box",
         boxShadow: "0 4px 6px rgba(0, 0, 0, 0.08)",
       }}
@@ -51,22 +53,28 @@ export default function Header({
       <Grid
         size={{
           xs: showNavbar ? 10 : 11,
-          md: showNavbar ? 3 : 9,
-          xl: showNavbar ? 3 : 9,
+          md: 2,
+          xl: 2,
         }}
         sx={{ display: "flex", alignItems: "center", mb: { xs: 0, md: 0 } }}
       >
         <img
           src={logo}
           alt="ThymeSave Logo"
-          style={{ width: 180, height: 50, marginRight: 20 }}
+          style={{
+            width: 180,
+            height: 50,
+            marginRight: 20,
+            cursor: "pointer",
+          }}
+          onClick={onLogoClick || (() => navigate("/"))}
         />
       </Grid>
 
       {/* navbar Links (Hidden on Mobile) */}
       {showNavbar && (
         <Grid
-          size={{ xs: 12, md: 6, xl: 6 }}
+          size={{ xs: 12, md: 8, xl: 8 }}
           sx={{
             display: { xs: "none", md: "flex", xl: "flex" },
             justifyContent: "center",
@@ -110,7 +118,7 @@ export default function Header({
           <Button
             variant="text"
             color="inherit"
-            onClick={onLogin}
+            onClick={() => navigate("/login")}
             sx={buttonStyle}
             disableRipple={true}
           >

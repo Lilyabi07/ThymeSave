@@ -8,11 +8,13 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
+import { useNavigate } from "react-router-dom";
 
 export default function MobileMenu() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
 
   const handleOpen = () => {
     setOpen(true);
@@ -22,11 +24,9 @@ export default function MobileMenu() {
     setOpen(false);
   };
 
-  const handleNavClick = (e: React.MouseEvent, page: string) => {
-    e.preventDefault();
-    console.log(`Navigating to ${page}`);
+  const handleNavClick = (page: string) => {
+    navigate(page);
     handleClose();
-    // TODO: dd routing logic here
   };
 
   if (!isMobile) return null;
@@ -103,16 +103,16 @@ export default function MobileMenu() {
           }}
         >
           <MenuItem
-            onClick={(e) => handleNavClick(e, "home")}
+            onClick={() => handleNavClick("/home")}
             data-text="Home"
             sx={{
-              fontSize: "1.2em",
+              fontSize: "1em",
               fontWeight: 700,
               fontFamily: "Inter",
               py: 2,
               px: 2,
               justifyContent: "center",
-              color: "#333333",
+              color: "#000000ff",
               transition: "all 0.5s ease",
               position: "relative",
               "&::before": {
@@ -152,16 +152,16 @@ export default function MobileMenu() {
             Home
           </MenuItem>
           <MenuItem
-            onClick={(e) => handleNavClick(e, "users")}
+            onClick={() => handleNavClick("/users")}
             data-text="Users"
             sx={{
-              fontSize: "1.2em",
+              fontSize: "1em",
               fontWeight: 700,
               fontFamily: "Inter",
               py: 2,
               px: 2,
               justifyContent: "center",
-              color: "#333333",
+              color: "#000000ff",
               transition: "all 0.5s ease",
               position: "relative",
               "&::before": {
@@ -201,16 +201,16 @@ export default function MobileMenu() {
             Users
           </MenuItem>
           <MenuItem
-            onClick={(e) => handleNavClick(e, "shopping-list")}
+            onClick={() => handleNavClick("/shopping-list")}
             data-text="shop"
             sx={{
-              fontSize: "1.2em",
+              fontSize: "1em",
               fontWeight: 700,
               fontFamily: "Inter",
               py: 2,
               px: 2,
               justifyContent: "center",
-              color: "#333333",
+              color: "#000000ff",
               transition: "all 0.5s ease",
               position: "relative",
               "&::before": {
