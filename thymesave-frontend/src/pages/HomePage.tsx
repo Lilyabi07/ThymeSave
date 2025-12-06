@@ -1,4 +1,4 @@
-import { Container, Typography, Box } from "@mui/material";
+import { Container, Box } from "@mui/material";
 
 export default function HomePage() {
   return (
@@ -10,9 +10,7 @@ export default function HomePage() {
           alignItems: "center",
           justifyContent: "center",
         }}
-      >
-        <Typography variant="h4">Welcome to ThymeSave - Home</Typography>
-      </Box>
+      ></Box>
     </Container>
   );
 }
